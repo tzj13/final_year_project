@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +15,7 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   DatabaseReference userRef = FirebaseDatabase.instance.ref().child("users");
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -233,34 +235,37 @@ class _SignupState extends State<Signup> {
       ),
     );
   }
-
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
+final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   void registerNewUser(BuildContext context) async {
     try {
+      // Create a new user in Firebase Authentication
       UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
 
-      if (userCredential != null) {
-        // Registration successful, you can navigate to the next screen or perform other actions here.
-        // For example, you can navigate to the login screen:
-        userRef.child(userCredential.user!.uid);
-        Map userData = {
-          "name": nameController.text.trim(),
-          "email": emailController.text.trim(),
-        };
-        userRef.child(userCredential.user!.uid).set(userData);
+      if (userCredential.user != null) {
+        // Create a new user in Firestore with the same UID
+        DocumentReference firestoreUserRef = firestore.collection('users').doc(userCredential.user!.uid);
+        await firestoreUserRef.set({
+          'uid': userCredential.user!.uid.trim(),
+          'name': nameController.text.trim(),
+          'email': emailController.text.trim(),
+          'password': passwordController.text.trim(),
+        });
+
+        print("User registered successfully");
+        print("User ID: ${firestoreUserRef.id}");
+
+        // Navigate to Login Screen
         Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
       }
     } catch (error) {
-      displayToastMsg("Registration Error", context);
+      print("Registration Error: $error");
+      displayToastMsg("Registration Error: $error", context);
     }
   }
-
   void displayToastMsg(String msg, BuildContext context) {
-    // Use Fluttertoast.showToast to display a toast message.
     Fluttertoast.showToast(msg: msg);
   }
 }

@@ -246,7 +246,6 @@ class _Register_ScreenState extends State<Register_Screen> {
       // Print debug information
       print("User registered successfully");
       print("User ID: ${userRef.id}");
-
       // Navigate to Login Screen
       Get.to(SignInView());
     } catch (error) {

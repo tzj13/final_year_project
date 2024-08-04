@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartcryptology/views/signin.dart';
 import 'login.dart';
 import 'main_navigation.dart';
 
@@ -50,7 +51,6 @@ class _Splash_screenState extends State<Splash_screen> with SingleTickerProvider
     _controller.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

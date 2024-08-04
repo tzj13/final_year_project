@@ -5,8 +5,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smartcryptology/main_navigation.dart';
 import 'package:smartcryptology/views/Register.dart';
 
-import 'chat_screen.dart';
-
 class SignInView extends StatefulWidget {
   @override
   _SignInViewState createState() => _SignInViewState();

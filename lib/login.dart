@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,8 @@ class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
-
 class _LoginScreenState extends State<LoginScreen> {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   final DatabaseReference userRef = FirebaseDatabase.instance.reference().child("users");
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -133,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(height: 40),
               InkWell(
                 onTap: () {
-                  loginAuthUser(context);
+                  loginUser(context);
                 },
                 child: Container(
                   width: 100,
@@ -197,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  void loginAuthUser(BuildContext context) async {
+  void loginUser(BuildContext context) async {
     if (formKey.currentState!.validate()) {
       await _firebaseAuth.signInWithEmailAndPassword(
         email: emailController.text.trim(),
@@ -212,7 +213,9 @@ class _LoginScreenState extends State<LoginScreen> {
       Fluttertoast.showToast(msg: "Not all fields are valid");
     }
   }
-
+  void displayToastMsg(String msg, BuildContext context) {
+    Fluttertoast.showToast(msg: msg);
+  }
   Future<void> resetPassword(BuildContext context) async {
     TextEditingController emailController = TextEditingController();
 
